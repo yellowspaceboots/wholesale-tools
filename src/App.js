@@ -1,50 +1,68 @@
-import React, { Component } from "react"
-import logo from "./logo.svg"
-import "./App.css"
+import React, { Suspense } from 'react'
+import logo from './logo.svg'
+import './App.css'
+import { ApolloClient } from 'apollo-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { HttpLink } from 'apollo-link-http'
+import { onError } from 'apollo-link-error'
+import { ApolloLink } from 'apollo-link'
+import { ApolloProvider } from 'react-apollo'
+import { ApolloProvider as ApolloHooksProvider, useQuery } from 'react-apollo-hooks'
+import gql from 'graphql-tag'
 
-class LambdaDemo extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { loading: false, msg: null }
+const client = new ApolloClient({
+  link: ApolloLink.from([
+    onError(({ graphQLErrors, networkError }) => {
+      if (graphQLErrors) {
+        graphQLErrors.map(({ message, locations, path }) =>
+          console.log(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+          )
+        )
+      }
+      if (networkError) console.log(`[Network error]: ${networkError}`)
+    }),
+    new HttpLink({
+      uri: '/.netlify/functions/graphql',
+      credentials: 'same-origin'
+    })
+  ]),
+  cache: new InMemoryCache()
+})
+
+const GET_HELLO_WORLD = gql`
+  {
+    hello
   }
-
-  handleClick = api => e => {
-    e.preventDefault()
-
-    this.setState({ loading: true })
-    fetch("/.netlify/functions/" + api)
-      .then(response => response.json())
-      .then(json => this.setState({ loading: false, msg: json.msg }))
-  }
-
-  render() {
-    const { loading, msg } = this.state
-
-    return (
-      <p>
-        <button onClick={this.handleClick("hello")}>{loading ? "Loading..." : "Call Lambda"}</button>
-        <button onClick={this.handleClick("async-dadjoke")}>{loading ? "Loading..." : "Call Async Lambda"}</button>
-        <br />
-        <span>{msg}</span>
-      </p>
-    )
-  }
+`
+const HelloWorld = () => {
+  const { data: { hello }, error } = useQuery(GET_HELLO_WORLD, { suspend: true })
+  if (error) {
+    return <div>Error! {error.message}</div>
+  };
+  return (
+    <p>{hello}</p>
+  )
 }
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
+const App = () => {
+  return (
+    <ApolloProvider client={client}>
+      <ApolloHooksProvider client={client}>
+        <div className='App'>
+          <header className='App-header'>
+            <img src={logo} className='App-logo' alt='logo' />
+            <p>
             Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <LambdaDemo />
-        </header>
-      </div>
-    )
-  }
+            </p>
+            <Suspense fallback={<div>Loading...</div>}>
+              <HelloWorld />
+            </Suspense>
+          </header>
+        </div>
+      </ApolloHooksProvider>
+    </ApolloProvider>
+  )
 }
 
 export default App
