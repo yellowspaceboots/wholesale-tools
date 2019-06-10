@@ -3,6 +3,10 @@
   "version": "0.4.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.1.0",
+    "@material-ui/icons": "^4.1.0",
+    "@material-ui/styles": "^4.1.0",
+    "@material-ui/system": "^4.1.0",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.2",
     "apollo-link": "^1.2.11",
