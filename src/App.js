@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useState } from 'react'
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
@@ -10,6 +10,9 @@ import Splash from './components/Splash'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
+import ResponsiveDrawer from './components/Dashboard'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import MomentUtils from '@date-io/moment'
 
 const theme = createMuiTheme({
   palette: {
@@ -24,9 +27,6 @@ const theme = createMuiTheme({
       main: '#ffbb41',
       dark: '#c88b00',
       contrastText: '#000000'
-    },
-    background: {
-      default: '#ffffff'
     }
   }
 })
@@ -52,16 +52,19 @@ const client = new ApolloClient({
 })
 
 const App = () => {
+  const [loggedIn, login] = useState(false)
   return (
     <ThemeProvider theme={theme}>
-      <ApolloProvider client={client}>
-        <ApolloHooksProvider client={client}>
-          <CssBaseline />
-          <Suspense fallback={<div>Loading...</div>}>
-            <Splash />
-          </Suspense>
-        </ApolloHooksProvider>
-      </ApolloProvider>
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <ApolloProvider client={client}>
+          <ApolloHooksProvider client={client}>
+            <CssBaseline />
+            <Suspense fallback={<div>Loading...</div>}>
+              { loggedIn ? <ResponsiveDrawer login={login} /> : <Splash login={login} /> }
+            </Suspense>
+          </ApolloHooksProvider>
+        </ApolloProvider>
+      </MuiPickersUtilsProvider>
     </ThemeProvider>
   )
 }

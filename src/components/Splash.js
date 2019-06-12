@@ -60,9 +60,8 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const Splash = () => {
+const Splash = ({ login }) => {
   const classes = useStyles()
-
   return (
     <Grid container component='main' className={classes.root}>
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -107,6 +106,7 @@ const Splash = () => {
               variant='contained'
               color='primary'
               className={classes.submit}
+              onClick={() => login(true)}
             >
               Sign In
             </Button>
