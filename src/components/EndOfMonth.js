@@ -1,7 +1,7 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
 
-const Dashboard = ({ title, ...props }) => {
+const EndOfMonth = ({ title, ...props }) => {
   return (
     <React.Fragment>
       <div style={{ marginTop: 20 }}>
@@ -13,4 +13,4 @@ const Dashboard = ({ title, ...props }) => {
   )
 }
 
-export default Dashboard
+export default EndOfMonth

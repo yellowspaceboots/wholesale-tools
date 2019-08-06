@@ -10,9 +10,13 @@ import Splash from './components/Splash'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
-import ResponsiveDrawer from './components/Dashboard'
+import Layout from './components/Layout'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
+import { AccountsClient } from '@accounts/client'
+import { accountsLink } from '@accounts/apollo-link'
+import { AccountsClientPassword } from '@accounts/client-password'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 const theme = createMuiTheme({
   palette: {
@@ -31,6 +35,28 @@ const theme = createMuiTheme({
   }
 })
 
+const accountsClient = () => new AccountsClient({}, { client: 'graphql' })
+export const accountsPassword = new AccountsClientPassword(accountsClient)
+const authLink = accountsLink(accountsClient)
+/*
+const authMiddleware = setContext(async (req, { headers }) => {
+  const accountsClient = await accountsClientFactory()
+  const token = await accountsClient.getTokens()
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : ''
+    }
+  }
+})
+*/
+const httpLink = new HttpLink({
+  uri: '/.netlify/functions/graphql',
+  credentials: 'same-origin'
+})
+
+const cache = new InMemoryCache()
+
 const client = new ApolloClient({
   link: ApolloLink.from([
     onError(({ graphQLErrors, networkError }) => {
@@ -43,12 +69,10 @@ const client = new ApolloClient({
       }
       if (networkError) console.log(`[Network error]: ${networkError}`)
     }),
-    new HttpLink({
-      uri: '/.netlify/functions/graphql',
-      credentials: 'same-origin'
-    })
+    authLink,
+    httpLink
   ]),
-  cache: new InMemoryCache()
+  cache
 })
 
 const App = () => {
@@ -58,10 +82,12 @@ const App = () => {
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <ApolloProvider client={client}>
           <ApolloHooksProvider client={client}>
-            <CssBaseline />
-            <Suspense fallback={<div>Loading...</div>}>
-              { loggedIn ? <ResponsiveDrawer login={login} /> : <Splash login={login} /> }
-            </Suspense>
+            <Router>
+              <CssBaseline />
+              <Suspense fallback={<div>Loading...</div>}>
+                { loggedIn ? <Layout login={login} /> : <Splash login={login} /> }
+              </Suspense>
+            </Router>
           </ApolloHooksProvider>
         </ApolloProvider>
       </MuiPickersUtilsProvider>
