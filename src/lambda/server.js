@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 const dotenv = require('dotenv').config()
 // Initialize connection to database
-const dbUrl = process.env.DB_URL_DEV
+const dbUrl = process.env.DB_URL
 
 const dbOptions = {
   useNewUrlParser: true,
