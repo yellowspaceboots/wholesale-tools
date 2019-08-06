@@ -148,6 +148,7 @@ const Splash = ({ login }) => {
             >
               Sign In
             </Button>
+            {/*
             <Button
               fullWidth
               variant='contained'
@@ -167,6 +168,7 @@ const Splash = ({ login }) => {
             >
               Test
             </Button>
+            */}
             <Grid container>
               <Grid item xs>
                 <Link href='#' variant='body2'>
