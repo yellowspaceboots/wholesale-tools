@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -13,19 +13,20 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { useQuery } from 'react-apollo-hooks'
 import gql from 'graphql-tag'
+import { accountsPassword } from '../App'
 
 const GET_HELLO_WORLD = gql`
   {
-    hello
+    testing
   }
 `
 const HelloWorld = () => {
-  const { data: { hello }, error } = useQuery(GET_HELLO_WORLD, { suspend: true })
+  const { data: { testing }, error } = useQuery(GET_HELLO_WORLD, { suspend: true })
   if (error) {
     return <div>Error! {error.message}</div>
   };
   return (
-    <p>{hello}</p>
+    <p>{testing}</p>
   )
 }
 
@@ -59,8 +60,43 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3, 0, 2)
   }
 }))
-
+/*
+const CREATE_USER = gql`
+mutation createUser($user: CreateUserInput!) {
+  createUser(user:$user)
+}
+`
+const LOGIN_USER = gql`
+mutation loginUser($serviceName: String!, $params: AuthenticateParamsInput!){
+  authenticate(serviceName: $serviceName, params: $params) {
+    sessionId
+    tokens {
+      refreshToken
+      accessToken
+    }
+  }
+}
+`
+*/
 const Splash = ({ login }) => {
+  /*
+  const user = useMutation(CREATE_USER, {
+    variables: {
+      user: {
+        profile: {
+          firstName: 'Jon',
+          lastName: 'Busch'
+        },
+        username: 'yellowspaceboots',
+        email: 'yellowspaceboots@gmail.com',
+        password: 'test'
+      }
+    }
+  })
+  const loginUser = useMutation(LOGIN_USER)
+  */
+  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('')
   const classes = useStyles()
   return (
     <Grid container component='main' className={classes.root}>
@@ -84,6 +120,7 @@ const Splash = ({ login }) => {
               name='email'
               autoComplete='email'
               autoFocus
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               variant='outlined'
@@ -95,6 +132,7 @@ const Splash = ({ login }) => {
               type='password'
               id='password'
               autoComplete='current-password'
+              onChange={(e) => setPassword(e.target.value)}
             />
             <FormControlLabel
               control={<Checkbox value='remember' color='primary' />}
@@ -109,6 +147,25 @@ const Splash = ({ login }) => {
               onClick={() => login(true)}
             >
               Sign In
+            </Button>
+            <Button
+              fullWidth
+              variant='contained'
+              color='primary'
+              className={classes.submit}
+              onClick={async () => {
+                console.log(accountsPassword.login)
+                try {
+                  await accountsPassword.login({
+                    password: password,
+                    user: { email: email }
+                  }).then(() => console.log('success!'))
+                } catch (err) {
+                  console.log({ error: err.message })
+                }
+              }}
+            >
+              Test
             </Button>
             <Grid container>
               <Grid item xs>

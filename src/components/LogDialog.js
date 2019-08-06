@@ -15,7 +15,7 @@ import NumberFormat from 'react-number-format'
 
 const size = [ 'Large', 'Medium', 'Small' ]
 
-const status = [ 'Pending', 'Open', 'Complete', 'Lost' ]
+const status = [ 'Pending', 'Open', 'Won', 'Lost' ]
 
 const NumberFormatCustom = (props) => {
   const { inputRef, onChange, ...other } = props
