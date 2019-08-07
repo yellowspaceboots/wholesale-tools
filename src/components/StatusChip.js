@@ -9,7 +9,7 @@ const StatusChip = ({ status }) => {
       ) : (status === 'Pending') ? (
         <Chip size='small' color='secondary' label={status} />
       ) : (status === 'Lost') ? (
-        <Chip size='small' style={{ backgroundColor: 'red' }} label={status} />
+        <Chip size='small' style={{ backgroundColor: 'red', color: 'white' }} label={status} />
       ) : (status === 'Open') ? (
         <Chip size='small' style={{ backgroundColor: 'green', color: 'white' }} label={status} />
       ) : (

@@ -15,7 +15,7 @@ const ListItemLink = (props) => {
 
   return (
     <li>
-      <ListItem button component={renderLink}>
+      <ListItem button component={renderLink} {...props}>
         {children}
       </ListItem>
     </li>

@@ -16,8 +16,9 @@ import Select from '@material-ui/core/Select'
 import StatusChip from './StatusChip'
 import TextField from '@material-ui/core/TextField'
 import initialState from './requests'
-import { useQuery } from 'react-apollo-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const GET_REQUESTS = gql`
   query getRequestsQuery {
@@ -79,19 +80,16 @@ const RequestLog = ({ title }) => {
     'Won',
     'Lost'
   ]
-  const { data: { getRequests }, error } = useQuery(GET_REQUESTS, { suspend: true })
+  const { loading, data: { getRequests }, error } = useQuery(GET_REQUESTS)
   if (error) { return <div>Error! {error.message}</div> }
-  console.log(initialState)
-  console.log(getRequests)
+  if (loading) { return <CircularProgress /> }
   return (
     <React.Fragment>
       <LogDialog open={logDialogOpen} setDialogOpen={setLogDialogOpen} addEvent={addEvent} edit={editId || events.filter(event => event.id === editId)[0]} />
       <SalesDialog open={salesDialogOpen} setDialogOpen={setSalesDialogOpen} />
-      <div style={{ marginTop: 20 }}>
-        <Typography variant='overline' color='textSecondary' style={{ marginBottom: 30, fontWeight: 600 }}>
-          {title}
-        </Typography>
-      </div>
+      <Typography variant='overline' color='textSecondary' style={{ marginBottom: 30, fontWeight: 600 }}>
+        {title}
+      </Typography>
       {/*
       <Button onClick={() => switchView(!view)} color='primary' style={{ marginBottom: 10 }}>
         {view ? 'View List' : 'View Calendar'}

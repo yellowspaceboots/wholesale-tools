@@ -6,29 +6,12 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import Link from '@material-ui/core/Link'
 import Paper from '@material-ui/core/Paper'
-import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
-import { useQuery } from 'react-apollo-hooks'
-import gql from 'graphql-tag'
-import { accountsPassword } from '../App'
-
-const GET_HELLO_WORLD = gql`
-  {
-    testing
-  }
-`
-const HelloWorld = () => {
-  const { data: { testing }, error } = useQuery(GET_HELLO_WORLD, { suspend: true })
-  if (error) {
-    return <div>Error! {error.message}</div>
-  };
-  return (
-    <p>{testing}</p>
-  )
-}
+import { accountsPassword } from '../client'
+import { withRouter } from 'react-router'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,43 +43,11 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3, 0, 2)
   }
 }))
-/*
-const CREATE_USER = gql`
-mutation createUser($user: CreateUserInput!) {
-  createUser(user:$user)
-}
-`
-const LOGIN_USER = gql`
-mutation loginUser($serviceName: String!, $params: AuthenticateParamsInput!){
-  authenticate(serviceName: $serviceName, params: $params) {
-    sessionId
-    tokens {
-      refreshToken
-      accessToken
-    }
-  }
-}
-`
-*/
-const Splash = ({ login }) => {
-  /*
-  const user = useMutation(CREATE_USER, {
-    variables: {
-      user: {
-        profile: {
-          firstName: 'Jon',
-          lastName: 'Busch'
-        },
-        username: 'yellowspaceboots',
-        email: 'yellowspaceboots@gmail.com',
-        password: 'test'
-      }
-    }
-  })
-  const loginUser = useMutation(LOGIN_USER)
-  */
+
+const Splash = ({ login, history }) => {
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const [mutationError, setMutationError] = useState('')
   const classes = useStyles()
   return (
     <Grid container component='main' className={classes.root}>
@@ -144,31 +95,34 @@ const Splash = ({ login }) => {
               variant='contained'
               color='primary'
               className={classes.submit}
-              onClick={() => login(true)}
+              onClick={() => {
+                history.push('/')
+                login(true)
+              }}
             >
               Sign In
             </Button>
-            {/*
             <Button
               fullWidth
               variant='contained'
               color='primary'
               className={classes.submit}
               onClick={async () => {
-                console.log(accountsPassword.login)
+                console.log(accountsPassword)
                 try {
                   await accountsPassword.login({
-                    password: password,
-                    user: { email: email }
-                  }).then(() => console.log('success!'))
+                    user: {
+                      email
+                    },
+                    password
+                  })
                 } catch (err) {
-                  console.log({ error: err.message })
+                  setMutationError(err.message)
                 }
               }}
             >
               Test
             </Button>
-            */}
             <Grid container>
               <Grid item xs>
                 <Link href='#' variant='body2'>
@@ -176,9 +130,7 @@ const Splash = ({ login }) => {
                 </Link>
               </Grid>
             </Grid>
-            <Box mt={5}>
-              <HelloWorld />
-            </Box>
+            <p>{mutationError}</p>
           </form>
         </div>
       </Grid>
@@ -186,4 +138,4 @@ const Splash = ({ login }) => {
   )
 }
 
-export default Splash
+export default withRouter(Splash)
