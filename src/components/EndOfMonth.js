@@ -4,11 +4,9 @@ import Typography from '@material-ui/core/Typography'
 const EndOfMonth = ({ title, ...props }) => {
   return (
     <React.Fragment>
-      <div style={{ marginTop: 20 }}>
-        <Typography variant='overline' color='textSecondary' style={{ marginBottom: 30, fontWeight: 600 }}>
-          {title}
-        </Typography>
-      </div>
+      <Typography variant='overline' color='textSecondary' style={{ marginBottom: 30, fontWeight: 600 }}>
+        {title}
+      </Typography>
     </React.Fragment>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import AppBar from '@material-ui/core/AppBar'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -7,7 +7,6 @@ import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
 import IconButton from '@material-ui/core/IconButton'
 import Backspace from '@material-ui/icons/Backspace'
-import FolderOpenIcon from '@material-ui/icons/FolderOpen'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
@@ -21,12 +20,12 @@ import AppRouter from './AppRouter'
 import ListItemLink from './ListItemLink'
 import { Link } from 'react-router-dom'
 import WidgetsIcon from '@material-ui/icons/Widgets'
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday'
-import PersonIcon from '@material-ui/icons/Person'
 import SettingsIcon from '@material-ui/icons/Settings'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import initialState from './requests'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney'
+import HomeIcon from '@material-ui/icons/Home'
+import NestedNavigation from './NestedNavigation'
 
 const drawerWidth = 240
 
@@ -60,12 +59,6 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const Loading = () => {
-  return (
-    <CircularProgress />
-  )
-}
-
 const Layout = (props) => {
   const { container } = props
   const classes = useStyles()
@@ -75,57 +68,52 @@ const Layout = (props) => {
   function handleDrawerToggle () {
     setMobileOpen(!mobileOpen)
   }
-
+  const navPadding = 44
   const drawer = (
     <React.Fragment>
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, backgroundColor: theme.palette.primary }}>
-        <List style={{ padding: 15, marginTop: 90 }} subheader={<Typography variant='overline' style={{ color: 'lightgrey', fontWeight: 600 }}>Customer</Typography>}>
-          <ListItemLink to='/commercial-projects/request-log'>
-            <ListItemIcon>{<FolderOpenIcon style={{ color: 'lightgrey' }} />}</ListItemIcon>
-            <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Order Status</Typography>} />
+        <List style={{ padding: 15, marginTop: 75, flex: 1 }} subheader={<Typography variant='overline' style={{ color: 'lightgrey', fontWeight: 600, marginLeft: 18, marginBottom: 10 }}>Navigation</Typography>}>
+          <ListItemLink to='/'>
+            <ListItemIcon style={{ minWidth: navPadding }}>{<HomeIcon style={{ color: 'lightgrey' }} />}</ListItemIcon>
+            <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Overview</Typography>} />
           </ListItemLink>
-        </List>
-        <List style={{ padding: 15 }} subheader={<Typography variant='overline' style={{ color: 'lightgrey', fontWeight: 600 }}>Commercial Projects</Typography>}>
-          <ListItemLink to='/commercial-projects/request-log'>
-            <ListItemIcon>{<FolderOpenIcon style={{ color: 'lightgrey' }} />}</ListItemIcon>
-            <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Request Log</Typography>} />
-            <ListItemSecondaryAction style={{ zIndex: -1, backgroundColor: '#ffbb41', borderRadius: '50%', height: 20, minWidth: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Typography variant='caption' style={{ margin: 4 }}>{openRequestCount}</Typography>
-            </ListItemSecondaryAction>
-          </ListItemLink>
-          <ListItemLink to='/commercial-projects/material-status'>
-            <ListItemIcon>{<WidgetsIcon style={{ color: 'lightgrey' }} />}</ListItemIcon>
-            <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Material Status</Typography>} />
-          </ListItemLink>
-        </List>
-        <List style={{ padding: 15 }} subheader={<Typography variant='overline' style={{ color: 'lightgrey', fontWeight: 600 }}>Accounting</Typography>}>
-          <ListItemLink to='/accounting/end-of-month'>
-            <ListItemIcon>{<CalendarTodayIcon style={{ color: 'lightgrey' }} />}</ListItemIcon>
-            <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>End of Month</Typography>} />
-          </ListItemLink>
-        </List>
-        <List style={{ flex: 1, padding: 15 }} subheader={<Typography variant='overline' style={{ color: 'lightgrey', fontWeight: 600 }}>Settings</Typography>}>
-          <ListItem button>
-            <ListItemIcon>{<PersonIcon style={{ color: 'lightgrey' }} />}</ListItemIcon>
-            <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Profile</Typography>} />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>{<SettingsIcon style={{ color: 'lightgrey' }} />}</ListItemIcon>
-            <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Account Settings</Typography>} />
-          </ListItem>
+          <NestedNavigation padding={navPadding} icon={<WidgetsIcon style={{ color: 'lightgrey' }} />} title='Commercial Projects'>
+            <ListItemLink to='/commercial-projects/request-log'>
+              <ListItemText style={{ paddingLeft: navPadding }} inset disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Request Log</Typography>} />
+              <ListItemSecondaryAction style={{ zIndex: -1, backgroundColor: '#ffbb41', borderRadius: '50%', height: 20, minWidth: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Typography variant='caption' style={{ margin: 4 }}>{openRequestCount}</Typography>
+              </ListItemSecondaryAction>
+            </ListItemLink>
+            <ListItemLink to='/commercial-projects/material-status'>
+              <ListItemText style={{ paddingLeft: navPadding }} inset disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Material Status</Typography>} />
+            </ListItemLink>
+          </NestedNavigation>
+          <NestedNavigation padding={navPadding} icon={<AttachMoneyIcon style={{ color: 'lightgrey' }} />} title='Accounting'>
+            <ListItemLink to='/accounting/end-of-month'>
+              <ListItemText style={{ paddingLeft: navPadding }} inset disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>End of Month</Typography>} />
+            </ListItemLink>
+          </NestedNavigation>
+          <NestedNavigation padding={navPadding} icon={<SettingsIcon style={{ color: 'lightgrey' }} />} title='Settings'>
+            <ListItemLink to='/settings/profile'>
+              <ListItemText style={{ paddingLeft: navPadding }} inset disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Profile</Typography>} />
+            </ListItemLink>
+            <ListItemLink to='/settings/account'>
+              <ListItemText style={{ paddingLeft: navPadding }} inset disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Account Settings</Typography>} />
+            </ListItemLink>
+          </NestedNavigation>
         </List>
         <Divider style={{ color: 'white' }} />
         <List>
-          <ListItem button onClick={() => props.login(false)}>
+          <ListItem button onClick={() => {
+            props.login(false)
+          }}>
             <ListItemIcon>{<Backspace style={{ color: 'lightgrey' }} />}</ListItemIcon>
             <ListItemText disableTypography primary={<Typography variant='body2' style={{ color: 'lightgrey' }}>Log Out</Typography>} />
           </ListItem>
         </List>
       </div>
     </React.Fragment>
-
   )
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -165,6 +153,11 @@ const Layout = (props) => {
             ModalProps={{
               keepMounted: true // Better open performance on mobile.
             }}
+            PaperProps={{
+              style: {
+                backgroundColor: '#1e3f76'
+              }
+            }}
           >
             {drawer}
           </Drawer>
@@ -188,9 +181,7 @@ const Layout = (props) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Suspense fallback={<Loading />}>
-          <AppRouter />
-        </Suspense>
+        <AppRouter />
       </main>
     </div>
   )

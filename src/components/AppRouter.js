@@ -5,6 +5,8 @@ import RequestLog from './RequestLog'
 import Request from './Request'
 import MaterialStatus from './MaterialStatus'
 import EndOfMonth from './EndOfMonth'
+import Profile from './Profile'
+import Account from './Account'
 
 const AppRouter = () => {
   return (
@@ -12,7 +14,7 @@ const AppRouter = () => {
       <Route
         exact
         path='/'
-        render={(props) => <Dashboard {...props} title='Home' />}
+        render={(props) => <Dashboard {...props} title='Overview' />}
       />
       <Route
         exact
@@ -33,6 +35,16 @@ const AppRouter = () => {
         exact
         path='/accounting/end-of-month'
         render={(props) => <EndOfMonth {...props} title='End of Month' />}
+      />
+      <Route
+        exact
+        path='/settings/profile'
+        render={(props) => <Profile {...props} title='Profile' />}
+      />
+      <Route
+        exact
+        path='/settings/account'
+        render={(props) => <Account {...props} title='Account' />}
       />
     </Switch>
   )
